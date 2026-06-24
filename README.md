@@ -9,7 +9,7 @@ Project initialization and Spring Security fundamentals study in progress.
 ## Planned features
 
 - User registration
-- Password hashing with BCrypt
+- Password hashing with Bcrypt
 - Authentication
 - JWT access token
 - Roles and authorities
