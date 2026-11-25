@@ -1,101 +1,103 @@
 # Auth API
 
-A backend project built with Java and Spring Boot to explore authentication, security, and database management.
+A Java and Spring Boot backend project for learning authentication, security, and database management.
 
-> **Status:** Under development. Authentication and authorization are not fully implemented yet.
+> **Status:** Under development. Login, registration, token generation, and authorization flows are not implemented yet.
 
 ## Technologies
 
 - Java 21
-- Spring Boot
+- Spring Boot and Spring Web MVC
 - Spring Security
-- Spring Data JPA
-- PostgreSQL
-- Flyway
-- Gradle
+- Spring Data JPA and Hibernate
+- Jakarta Bean Validation
+- PostgreSQL and Flyway
+- Gradle Wrapper
 - Lombok
 
-## Current features
+## Current implementation
 
-- `User` entity mapped to the database
-- Versioned database migration with Flyway
-- Database schema validation with Hibernate
-- Test endpoint at `GET /test`
-- Local startup script
+- `User` entity mapped to the `users` table and implementing `UserDetails`
+- `UserRepository` with a lookup by email
+- Request and response DTOs for login and user registration, with validation annotations on request fields
+- Versioned database migration with Flyway and schema validation with Hibernate
+- Test endpoint at `GET /`
+- Shell script for local startup
+
+The DTOs and repository provide building blocks; they do not yet expose registration or login endpoints. The user entity currently returns an empty list of authorities.
 
 ## Prerequisites
 
 - Java 21
 - PostgreSQL
 - Git
+- Bash for the local startup script
 
-The project includes the Gradle Wrapper, so a separate Gradle installation is not required.
+The project includes the Gradle Wrapper; a separate Gradle installation is not required.
 
 ## Getting started
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/rodolcfaedo/auth-api.git
+git clone https://github.com/rodolfocfaedo/auth-api.git
 cd auth-api
 ```
 
-### 2. Set up the database
+### 2. Prepare the database
 
-Create a PostgreSQL database and make sure your database user has the necessary permissions.
+Create a PostgreSQL database and ensure its user has the permissions needed to connect and apply migrations.
 
 ### 3. Configure environment variables
-
-Create your local environment file from the example:
 
 ```bash
 cp .env.example .env
 ```
 
-Update `.env` with your database connection details and the other settings described in `.env.example`.
+Edit `.env` with your local settings:
 
-> Keep your `.env` file private. Do not commit credentials to the repository.
+```dotenv
+APP_NAME=auth-api
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=auth_api
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+SERVER_PORT=8080
+```
 
-### 4. Run the application
+Use the database name and credentials configured in your PostgreSQL instance. Keep `.env` private and do not commit credentials.
+
+### 4. Start the application
+
+From the project directory, run:
 
 ```bash
 ./scripts/run-local.sh
 ```
 
-The script loads the environment variables from `.env` and starts the application using the Gradle Wrapper.
-
-Flyway applies pending migrations when the application starts. Hibernate then validates the database schema against the mapped entities.
+The script changes to the project root, loads `.env`, and runs `./gradlew bootRun`. Flyway applies pending migrations on startup, and Hibernate validates the schema against the entities. The default server port is `8080`.
 
 ## Test endpoint
 
 ```http
-GET /test
+GET /
 ```
 
-The endpoint returns:
+When the request is authenticated under the current Spring Security configuration, the endpoint returns:
 
 ```text
 Testing Security
 ```
 
-Spring Security is enabled, so the endpoint may require authentication using the current default configuration.
+Spring Security is enabled. Authentication and authorization are still under development; the project does not yet provide a custom login flow.
 
 ## Database migrations
 
-Migration files are located in:
+Flyway migrations are stored in `src/main/resources/db/migration/`. The initial migration, `V1__create_table_users.sql`, creates the `users` table.
 
-```text
-src/main/resources/db/migration/
-```
-
-The first migration creates the `users` table:
-
-```text
-V1__create_table_users.sql
-```
-
-Once a migration has been applied to a shared database, create a new versioned migration for subsequent changes instead of editing the existing file.
+After a migration has been applied, add a new versioned migration for subsequent schema changes rather than editing the existing one. Hibernate is configured with `ddl-auto: validate`, so schema changes must be reflected in the migrations.
 
 ## Project status
 
-This project is being developed as a learning exercise. The authentication and authorization flows are planned and have not yet been completed.
+This is a learning project in active development. The request and response models and persistence layer are early steps toward authentication; registration, login, token handling, and authorization remain to be implemented.
