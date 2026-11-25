@@ -50,6 +50,10 @@ Create a PostgreSQL database and ensure its user has the permissions needed to c
 
 ### 3. Configure environment variables
 
+> **Warning:** Run the following command only when `.env` does not already exist.
+> It overwrites an existing `.env`, replacing your local database credentials
+> with example values. If you already have an `.env`, edit it directly instead.
+
 ```bash
 cp .env.example .env
 ```
